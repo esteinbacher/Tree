@@ -38,8 +38,8 @@ public class Tree {
 		return value;
 
 	}
-	
-	
+
+
 	public int size() {
 		return sizeHelper(this.myRoot);
 	}
@@ -51,8 +51,8 @@ public class Tree {
 			return sizeHelper(current.myLeft) + sizeHelper(current.myRight) + 1;
 		}
 	}
-	
-	
+
+
 	public Node randomNode() {
 		Random rand = new Random();
 		ArrayList<Node> nodes = new ArrayList<Node>();
@@ -61,7 +61,7 @@ public class Tree {
 		}
 		int index = rand.nextInt(nodes.size()-1);
 		return nodes.get(index);
-		
+
 	}
 	private void randomNodeHelper(Node currentRoot, ArrayList<Node> nodes) {
 		if(currentRoot == null) {
@@ -70,74 +70,81 @@ public class Tree {
 
 		randomNodeHelper(currentRoot.myLeft, nodes);
 		nodes.add(currentRoot);
-		
+
 		randomNodeHelper(currentRoot.myRight, nodes);
-		
+
 	}
-	
-	public static void crossover(Tree newTree1, Tree newTree2) {
-		Node node1 = newTree1.randomNode();
+
+	public void crossover(Tree newTree2) {
+		this.myRoot = new Node("Y", null, -1);
+		/**
 		System.out.println(node1.getOperator());
-		
-		
+
+
 		Node node2 = newTree2.randomNode();
 		System.out.println(node2.getOperator());
 		Node temp = node2;
-		System.out.println(node1.myParent.myRight == node1);
-		System.out.println(node1.myParent.myLeft == node1);
-		if(node1.myParent.myRight == node1) {
-			node1.myParent.myRight = node2;
-			
+
+		if(node1.dir == 0) {
+			if(node1.myParent != null) {
+				node1.myParent.myLeft = new Node("word", node1.myParent, 0);
+			}
 		}
 		else {
-			
-			node1.myParent.myLeft = node2;
+			if(node1.myParent!=null) {
+				node1.myParent.myRight = new Node("value", node1.myParent, 1);
+			}
 		}
-		
+
 		node2.myParent = node1.myParent;
-		
-		if(node2.myParent.myRight == node2) {
+
+		if(node2.dir == 0) {
+			System.out.println("here2");
 			node2.myParent.myRight = node1;
 		}
 		else {
 			node2.myParent.myLeft = node1;
 		}
-		
+
 		node1.myParent = temp.myParent;
+
+		**/
 	}
+
+
 	public Tree copy() {
-		Node newRoot = new Node(this.myRoot.getOperator(), new Node(this.myRoot));
+		Node newRoot = new Node(this.myRoot.getOperator(), new Node(this.myRoot),-1);
 		copyHelper(newRoot, this.myRoot);
 		Tree t = new Tree(newRoot);
 		return t;
 
 	}
-	
-	
+
+
 	private void copyHelper(Node newRoot, Node oldRoot) {
 		if(oldRoot.myLeft == null && oldRoot.myRight == null) {
 			if(oldRoot.getConstant() != 0) {
-				newRoot = new Node(oldRoot.getConstant(), new Node(oldRoot.myParent));
+				newRoot = new Node(oldRoot.getConstant(), new Node(oldRoot.myParent), oldRoot.dir);
 			}
 			else {
-				newRoot = new Node("x", new Node(oldRoot.myParent));
+				newRoot = new Node("x", new Node(oldRoot.myParent), oldRoot.dir);
 			}
 			return;
 		}
 		if(oldRoot.myLeft.getConstant() != 0) {
-			newRoot.myLeft = new Node(oldRoot.myLeft.getConstant(), new Node(oldRoot));
+			newRoot.myLeft = new Node(oldRoot.myLeft.getConstant(), new Node(oldRoot), oldRoot.myLeft.dir);
 		}
 		else {
-			newRoot.myLeft = new Node(oldRoot.myLeft.getOperator(), new Node(oldRoot));
+			newRoot.myLeft = new Node(oldRoot.myLeft.getOperator(), new Node(oldRoot), oldRoot.myLeft.dir);
 		}
 		copyHelper(newRoot.myLeft, oldRoot.myLeft);
 
-	
+
 		if(oldRoot.myRight.getConstant() != 0) {
-			newRoot.myRight = new Node(oldRoot.myRight.getConstant(), new Node(oldRoot));
+			newRoot.myRight = new Node(oldRoot.myRight.getConstant(), new Node(oldRoot), oldRoot.myRight.dir);
 		}
 		else {
-			newRoot.myRight = new Node(oldRoot.myRight.getOperator(), new Node(oldRoot));
+			newRoot.myRight = new Node(oldRoot.myRight.getOperator(), new Node(oldRoot), oldRoot.myRight.dir);
 		}
 		copyHelper(newRoot.myRight, oldRoot.myRight);
 	}
@@ -147,8 +154,8 @@ public class Tree {
 			printInOrder(myRoot, 0);
 		}
 	}
-	
-	
+
+
 	private void printInOrder(Node currentRoot, int indentLevel) {
 		if(currentRoot == null) {
 			return;
@@ -159,7 +166,7 @@ public class Tree {
 			System.out.print("   ");
 		}
 		if(currentRoot.getConstant() != 0) {
-		System.out.println(currentRoot.getConstant());
+			System.out.println(currentRoot.getConstant());
 		}
 		else {
 			System.out.println(currentRoot.getOperator());
@@ -168,24 +175,26 @@ public class Tree {
 
 	}
 	public static void main(String[] args) {
-		Tree t = new Tree(new Node("*", null));
-		t.myRoot.myLeft = new Node("+", t.myRoot);
-		t.myRoot.myRight = new Node("x", t.myRoot);
-		t.myRoot.myLeft.myLeft = new Node(10, t.myRoot.myLeft);
-		t.myRoot.myLeft.myRight = new Node("x", t.myRoot.myLeft);
-		Tree y = new Tree(new Node("/", null));
-		y.myRoot.myLeft = new Node("*", y.myRoot);
-		y.myRoot.myRight = new Node("-", y.myRoot);
-		y.myRoot.myLeft.myLeft = new Node("x", y.myRoot.myLeft);
-		y.myRoot.myLeft.myRight = new Node("x", y.myRoot.myLeft);
-		y.myRoot.myRight.myRight = new Node(12, y.myRoot.myRight);
-		y.myRoot.myRight.myLeft = new Node(3, y.myRoot.myRight);
+		Tree t = new Tree(new Node("*", null,-1));
+
+		t.myRoot.myLeft = new Node("+", t.myRoot,1);
+		t.myRoot.myRight = new Node("x", t.myRoot,0);
+		t.myRoot.myLeft.myLeft = new Node(10, t.myRoot.myLeft,1);
+		t.myRoot.myLeft.myRight = new Node("x", t.myRoot.myLeft,0);
+		Tree y = new Tree(new Node("/", null,-1));
+		y.myRoot.myLeft = new Node("*", y.myRoot,1);
+		y.myRoot.myRight = new Node("-", y.myRoot,0);
+		y.myRoot.myLeft.myLeft = new Node("x", y.myRoot.myLeft,1);
+		y.myRoot.myLeft.myRight = new Node("x", y.myRoot.myLeft,0);
+		y.myRoot.myRight.myRight = new Node(12, y.myRoot.myRight,0);
+		y.myRoot.myRight.myLeft = new Node(3, y.myRoot.myRight,1);
+		t.myRoot.myLeft.myRight = y.myRoot.myLeft.myRight.myParent.myRight;
 		Tree ty = t.copy();
 		Tree yt = y.copy();
-		crossover(ty, yt);
+		ty.crossover(yt);
 		ty.printTree();
-		
-	
-		
+
+
+
 	}
 }
