@@ -107,7 +107,17 @@ public class Tree {
 		NodeList(tree.myRoot, Tree1);
 
 		Node node = Tree1.get(rand.nextInt(Tree1.size()-1));
-		if(node.getConstant()!= 0 || node.getOperator() =="x") {
+		if(node.getConstant()!= 0){
+			int chance = rand.nextInt(3);
+			if (chance == 0){
+				node.setOperator("x");
+				node.setConstant(0);
+			}
+			else{
+				node.setConstant(rand.nextInt(100)+1);
+			}
+		}
+		else if(node.getOperator() =="x") {
 			node.setConstant(rand.nextInt(100)+1);
 		}
 		else {
@@ -187,29 +197,31 @@ public class Tree {
 		y.myRoot.myLeft.myRight = new Node("x", y.myRoot.myLeft,0);
 		y.myRoot.myRight.myRight = new Node("x", y.myRoot.myRight,0);
 		y.myRoot.myRight.myLeft = new Node(3, y.myRoot.myRight,1);
+		System.out.println("___T___");
 		t.printTree();
 		System.out.println("______");
+		System.out.println("___Y___");
 		y.printTree();
 		System.out.println("______");
 		System.out.println("_______");
 		System.out.println();
-	
+
 		Tree f = new Tree(copy(t.myRoot));
 		Tree s = new Tree(copy(y.myRoot));
 		Tree m = new Tree(copy(s.myRoot));
 		crossover(f, s);
-
-
-
-
-		System.out.println("_______");
-		System.out.println("_______");
-		crossover(f,m);
-		//mutate(f);
+		System.out.println("___F = TxY___");
 		f.printTree();
-		//System.out.println(y.evaluate(y.myRoot,4.5));
+		System.out.println("___S = YxT___");
+		s.printTree();
+
+		System.out.println("___F mutated___");
+		//crossover(f,m);
+		mutate(f);
+		f.printTree();
+		System.out.println(f.evaluate(f.myRoot,1));
 		System.out.println("_______");
-		m.printTree();
+		//m.printTree();
 		//y.printTree();
 
 
