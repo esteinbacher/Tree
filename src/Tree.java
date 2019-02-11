@@ -53,101 +53,100 @@ public class Tree {
 	}
 
 
-	public Node randomNode() {
-		Random rand = new Random();
-		ArrayList<Node> nodes = new ArrayList<Node>();
-		if(myRoot != null) {
-			randomNodeHelper(myRoot, nodes);
-		}
-		int index = rand.nextInt(nodes.size()-1);
-		return nodes.get(index);
 
-	}
-	private void randomNodeHelper(Node currentRoot, ArrayList<Node> nodes) {
+	private static void NodeList(Node currentRoot, ArrayList<Node> nodes) {
 		if(currentRoot == null) {
 			return;
 		}
 
-		randomNodeHelper(currentRoot.myLeft, nodes);
+		NodeList(currentRoot.myLeft, nodes);
 		nodes.add(currentRoot);
 
-		randomNodeHelper(currentRoot.myRight, nodes);
+		NodeList(currentRoot.myRight, nodes);
 
 	}
 
-	public void crossover(Tree newTree2) {
-		this.myRoot = new Node("Y", null, -1);
-		/**
-		System.out.println(node1.getOperator());
+	public static void crossover(Tree newTree1, Tree newTree2) {
+		Random rand = new Random();
+		ArrayList<Node> Tree1 = new ArrayList<Node>();
+		ArrayList<Node> Tree2 = new ArrayList<Node>();
 
 
-		Node node2 = newTree2.randomNode();
-		System.out.println(node2.getOperator());
-		Node temp = node2;
+		NodeList(newTree1.myRoot, Tree1);
+		NodeList(newTree2.myRoot, Tree2);
+		Node node1 = Tree1.get(rand.nextInt(Tree1.size()-1));
+		Node node2 = Tree2.get(rand.nextInt(Tree2.size()-1));
+		while(node1.myParent == null) node1 = Tree1.get(rand.nextInt(Tree1.size()-1));
 
-		if(node1.dir == 0) {
-			if(node1.myParent != null) {
-				node1.myParent.myLeft = new Node("word", node1.myParent, 0);
-			}
-		}
-		else {
-			if(node1.myParent!=null) {
-				node1.myParent.myRight = new Node("value", node1.myParent, 1);
-			}
-		}
+		while(node2.myParent ==null) node2 = Tree2.get(rand.nextInt(Tree2.size()-1));
+		Node temp = new Node(node1);
 
-		node2.myParent = node1.myParent;
 
-		if(node2.dir == 0) {
-			System.out.println("here2");
-			node2.myParent.myRight = node1;
-		}
-		else {
+		if(node2.dir == 1) {
 			node2.myParent.myLeft = node1;
 		}
-
-		node1.myParent = temp.myParent;
-
-		**/
-	}
-
-
-	public Tree copy() {
-		Node newRoot = new Node(this.myRoot.getOperator(), new Node(this.myRoot),-1);
-		copyHelper(newRoot, this.myRoot);
-		Tree t = new Tree(newRoot);
-		return t;
-
-	}
-
-
-	private void copyHelper(Node newRoot, Node oldRoot) {
-		if(oldRoot.myLeft == null && oldRoot.myRight == null) {
-			if(oldRoot.getConstant() != 0) {
-				newRoot = new Node(oldRoot.getConstant(), new Node(oldRoot.myParent), oldRoot.dir);
-			}
-			else {
-				newRoot = new Node("x", new Node(oldRoot.myParent), oldRoot.dir);
-			}
-			return;
+		else if(node2.dir ==0) {
+			node2.myParent.myRight = node1;
 		}
-		if(oldRoot.myLeft.getConstant() != 0) {
-			newRoot.myLeft = new Node(oldRoot.myLeft.getConstant(), new Node(oldRoot), oldRoot.myLeft.dir);
+		node1.myParent = node2.myParent;
+		if(temp.dir == 1) {
+			temp.myParent.myLeft = node2;
+		}
+		else if(temp.dir == 0) {
+			temp.myParent.myRight = node2;
+		}
+		node2.myParent = temp.myParent;
+
+
+
+	}
+
+	public static void mutate(Tree tree) {
+		Random rand = new Random();
+		ArrayList<Node> Tree1 = new ArrayList<Node>();
+		NodeList(tree.myRoot, Tree1);
+
+		Node node = Tree1.get(rand.nextInt(Tree1.size()-1));
+		if(node.getConstant()!= 0 || node.getOperator() =="x") {
+			node.setConstant(rand.nextInt(100)+1);
 		}
 		else {
-			newRoot.myLeft = new Node(oldRoot.myLeft.getOperator(), new Node(oldRoot), oldRoot.myLeft.dir);
+			int operand = rand.nextInt(3);
+			if(operand == 0) node.setOperator("+");
+			else if(operand == 1) node.setOperator("-");
+			else if(operand == 2) node.setOperator("*");
+			else if(operand == 3) node.setOperator("/");
 		}
-		copyHelper(newRoot.myLeft, oldRoot.myLeft);
+	}
+	public static Node copy(Node node) {
+		Node left = null;
+		Node right = null;
+		Node new1 = null;
+		if(node.myLeft != null) {
+			left = copy(node.myLeft);
 
+		}
+		if(node.myRight != null) {
+			right = copy(node.myRight);
 
-		if(oldRoot.myRight.getConstant() != 0) {
-			newRoot.myRight = new Node(oldRoot.myRight.getConstant(), new Node(oldRoot), oldRoot.myRight.dir);
+		}
+
+		if(node.getConstant() != 0) {
+			new1 = new Node(left, right, node.getConstant(), node.dir);
 		}
 		else {
-			newRoot.myRight = new Node(oldRoot.myRight.getOperator(), new Node(oldRoot), oldRoot.myRight.dir);
+			new1 = new Node(left,right,node.getOperator(),node.dir);
 		}
-		copyHelper(newRoot.myRight, oldRoot.myRight);
+		if(left != null && right != null) {
+			left.myParent = new1;
+			right.myParent = new1;
+		}
+		return new1;
+
 	}
+
+
+
 
 	private void printTree() {
 		if(myRoot != null) {
@@ -165,7 +164,7 @@ public class Tree {
 		for(int i = 0; i < indentLevel; i++) {
 			System.out.print("   ");
 		}
-		if(currentRoot.getConstant() != 0) {
+		if(currentRoot.getConstant() != 0 ) {
 			System.out.println(currentRoot.getConstant());
 		}
 		else {
@@ -184,15 +183,36 @@ public class Tree {
 		Tree y = new Tree(new Node("/", null,-1));
 		y.myRoot.myLeft = new Node("*", y.myRoot,1);
 		y.myRoot.myRight = new Node("-", y.myRoot,0);
-		y.myRoot.myLeft.myLeft = new Node("x", y.myRoot.myLeft,1);
+		y.myRoot.myLeft.myLeft = new Node(23, y.myRoot.myLeft,1);
 		y.myRoot.myLeft.myRight = new Node("x", y.myRoot.myLeft,0);
-		y.myRoot.myRight.myRight = new Node(12, y.myRoot.myRight,0);
+		y.myRoot.myRight.myRight = new Node("x", y.myRoot.myRight,0);
 		y.myRoot.myRight.myLeft = new Node(3, y.myRoot.myRight,1);
-		t.myRoot.myLeft.myRight = y.myRoot.myLeft.myRight.myParent.myRight;
-		Tree ty = t.copy();
-		Tree yt = y.copy();
-		ty.crossover(yt);
-		ty.printTree();
+		t.printTree();
+		System.out.println("______");
+		y.printTree();
+		System.out.println("______");
+		System.out.println("_______");
+		System.out.println();
+	
+		Tree f = new Tree(copy(t.myRoot));
+		Tree s = new Tree(copy(y.myRoot));
+		Tree m = new Tree(copy(s.myRoot));
+		crossover(f, s);
+
+
+
+
+		System.out.println("_______");
+		System.out.println("_______");
+		crossover(f,m);
+		//mutate(f);
+		f.printTree();
+		//System.out.println(y.evaluate(y.myRoot,4.5));
+		System.out.println("_______");
+		m.printTree();
+		//y.printTree();
+
+
 
 
 

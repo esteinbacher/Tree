@@ -36,13 +36,34 @@ public class Node {
 		dir = node.dir;
 	}
 
+	public Node(Node left, Node right, String operator, int d) {
+		myConstant = 0;
+		myLeft = left;
+		myRight = right;
+		myOperator = operator;
+		myParent = null;
+		dir = d;
+	}
+	public Node(Node left, Node right, int constant, int d) {
+		myConstant = constant;
+		myLeft = left;
+		myRight = right;
+		myOperator = "c";
+		myParent = null;
+		dir = d;
+	}
+
 	public int getConstant() {
 		return myConstant;
 	}
-
+	public void setConstant(int value) {
+		myConstant = value;
+	}
 	public String getOperator() {
 		return myOperator;
-
+	}
+	public void setOperator(String operator) {
+		myOperator = operator;
 	}
 /**
 	public int hashCode() {
