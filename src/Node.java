@@ -8,7 +8,7 @@ public class Node {
 	public Node myParent;
 	public int dir;
 
-
+	#creates internal node, given operator, parent, and dir
 	public Node(String operator, Node parent, int d) {
 		myOperator = operator;
 		myConstant = 0;
@@ -18,6 +18,7 @@ public class Node {
 		dir = d;
 	}
 
+	#creates leaf node, given constant, parent, and dir
 	public Node(int constant, Node parent, int d) {
 		myConstant = constant;
 		myLeft = null;
@@ -27,6 +28,7 @@ public class Node {
 		dir = d;
 	}
 
+	#copies a node
 	public Node(Node node) {
 		myConstant = node.myConstant;
 		myLeft = node.myLeft;
@@ -36,6 +38,7 @@ public class Node {
 		dir = node.dir;
 	}
 
+	#copies internal node
 	public Node(Node left, Node right, String operator, int d) {
 		myConstant = 0;
 		myLeft = left;
@@ -44,6 +47,8 @@ public class Node {
 		myParent = null;
 		dir = d;
 	}
+
+	#copies leaf node
 	public Node(Node left, Node right, int constant, int d) {
 		myConstant = constant;
 		myLeft = left;

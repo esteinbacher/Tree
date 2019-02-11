@@ -4,11 +4,17 @@ import java.util.Random;
 public class Tree {
 	public Node myRoot;
 
+	#makes a tree given a root
 	public Tree(Node root) {
 		myRoot = root;
 	}
 
+	#creates new random tree of specified depth
+	public newRandomTree(int depth){
 
+	}
+
+	#evaluates a tree given a value for x
 	public double evaluate(Node current, double x) {
 
 		if(current.myLeft == null && current.myRight == null) {
@@ -18,7 +24,6 @@ public class Tree {
 			else {
 				return x;
 			}
-
 		}
 		double value;
 		double left = evaluate(current.myLeft, x);
@@ -39,10 +44,11 @@ public class Tree {
 
 	}
 
-
+	#returns number of nodes in tree
 	public int size() {
 		return sizeHelper(this.myRoot);
 	}
+
 	public int sizeHelper(Node current) {
 		if(current == null) {
 			return 0;
@@ -52,8 +58,7 @@ public class Tree {
 		}
 	}
 
-
-
+	#turns tree into list, good for random selection
 	private static void NodeList(Node currentRoot, ArrayList<Node> nodes) {
 		if(currentRoot == null) {
 			return;
@@ -63,9 +68,9 @@ public class Tree {
 		nodes.add(currentRoot);
 
 		NodeList(currentRoot.myRight, nodes);
-
 	}
 
+	#crosses over two trees
 	public static void crossover(Tree newTree1, Tree newTree2) {
 		Random rand = new Random();
 		ArrayList<Node> Tree1 = new ArrayList<Node>();
@@ -81,7 +86,6 @@ public class Tree {
 		while(node2.myParent ==null) node2 = Tree2.get(rand.nextInt(Tree2.size()-1));
 		Node temp = new Node(node1);
 
-
 		if(node2.dir == 1) {
 			node2.myParent.myLeft = node1;
 		}
@@ -96,11 +100,9 @@ public class Tree {
 			temp.myParent.myRight = node2;
 		}
 		node2.myParent = temp.myParent;
-
-
-
 	}
 
+	#mutates a random node within given tree
 	public static void mutate(Tree tree) {
 		Random rand = new Random();
 		ArrayList<Node> Tree1 = new ArrayList<Node>();
@@ -128,6 +130,8 @@ public class Tree {
 			else if(operand == 3) node.setOperator("/");
 		}
 	}
+
+	#copys a tree, returns root node
 	public static Node copy(Node node) {
 		Node left = null;
 		Node right = null;
@@ -152,19 +156,16 @@ public class Tree {
 			right.myParent = new1;
 		}
 		return new1;
-
 	}
 
-
-
-
+	#print the tree
 	private void printTree() {
 		if(myRoot != null) {
 			printInOrder(myRoot, 0);
 		}
 	}
 
-
+	#prints tree in order
 	private void printInOrder(Node currentRoot, int indentLevel) {
 		if(currentRoot == null) {
 			return;
@@ -181,8 +182,8 @@ public class Tree {
 			System.out.println(currentRoot.getOperator());
 		}
 		printInOrder(currentRoot.myLeft, indentLevel + 1);
-
 	}
+
 	public static void main(String[] args) {
 		Tree t = new Tree(new Node("*", null,-1));
 
@@ -223,10 +224,5 @@ public class Tree {
 		System.out.println("_______");
 		//m.printTree();
 		//y.printTree();
-
-
-
-
-
 	}
 }
