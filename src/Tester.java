@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 public class Tester {
 
-	#read in data to a map (x->y)
+	//read in data to a map (x->y)
 	private static HashMap<Double, Double> readXYFromCSV(String fileName){
 		HashMap<Double,Double> data = new HashMap<Double, Double>();
 		Path pathToFile = Paths.get(fileName);
@@ -27,7 +27,7 @@ public class Tester {
 		}
 		return data;
 	}
-	
+
 	public static void main(String[] args) {
 		HashMap data = readXYFromCSV("dataset1.csv");
 

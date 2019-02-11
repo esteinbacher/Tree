@@ -4,19 +4,59 @@ import java.util.Random;
 public class Tree {
 	public Node myRoot;
 
-	#makes a tree given a root
+	//makes a tree given a root
 	public Tree(Node root) {
 		myRoot = root;
 	}
 
-	#creates new random tree of specified depth
-	public newRandomTree(int depth){
-
+	//creates new random tree of specified depth
+	public static Tree newRandomTree(int goalDepth){
+		Node root = new Node(null, -1);
+		randomTreeHelper(root, 0, goalDepth);
+		return new Tree(root);
 	}
 
-	#evaluates a tree given a value for x
-	public double evaluate(Node current, double x) {
+	private static void randomTreeHelper(Node current, int depth, int goalDepth){
+		Random rand = new Random();
+		String operator = "";
+		int constant;
+		int chance;
 
+		//if leaf
+		if (depth == goalDepth){
+			current.myLeft = null;
+			current.myRight = null;
+			chance = rand.nextInt(3);
+			if (chance == 0) {
+				current.setOperator("x");
+				current.setConstant(0);
+			}
+			else{
+				current.setOperator("c");
+				current.setConstant(rand.nextInt(100) + 1);
+			}
+			return;
+		}
+
+		//internal
+		chance = rand.nextInt(4);
+		if(chance == 0) operator = "+";
+		else if(chance == 1) operator = "-";
+		else if(chance == 2) operator = "*";
+		else if(chance == 3) operator = "/";
+
+		current.setOperator(operator);
+		current.setConstant(0);
+		current.myLeft = new Node(current, 1);
+		current.myRight = new Node(current, 0);
+		randomTreeHelper(current.myLeft, depth + 1, goalDepth);
+		randomTreeHelper(current.myRight, depth + 1, goalDepth);
+
+		return;
+	}
+
+	//evaluates a tree given a value for x
+	public double evaluate(Node current, double x) {
 		if(current.myLeft == null && current.myRight == null) {
 			if(current.getConstant() != 0) {
 				return (double) current.getConstant();
@@ -44,7 +84,7 @@ public class Tree {
 
 	}
 
-	#returns number of nodes in tree
+	//returns number of nodes in tree
 	public int size() {
 		return sizeHelper(this.myRoot);
 	}
@@ -58,7 +98,7 @@ public class Tree {
 		}
 	}
 
-	#turns tree into list, good for random selection
+	//turns tree into list, good for random selection
 	private static void NodeList(Node currentRoot, ArrayList<Node> nodes) {
 		if(currentRoot == null) {
 			return;
@@ -70,7 +110,7 @@ public class Tree {
 		NodeList(currentRoot.myRight, nodes);
 	}
 
-	#crosses over two trees
+	//crosses over two trees
 	public static void crossover(Tree newTree1, Tree newTree2) {
 		Random rand = new Random();
 		ArrayList<Node> Tree1 = new ArrayList<Node>();
@@ -102,7 +142,7 @@ public class Tree {
 		node2.myParent = temp.myParent;
 	}
 
-	#mutates a random node within given tree
+	//mutates a random node within given tree
 	public static void mutate(Tree tree) {
 		Random rand = new Random();
 		ArrayList<Node> Tree1 = new ArrayList<Node>();
@@ -123,7 +163,7 @@ public class Tree {
 			node.setConstant(rand.nextInt(100)+1);
 		}
 		else {
-			int operand = rand.nextInt(3);
+			int operand = rand.nextInt(4);
 			if(operand == 0) node.setOperator("+");
 			else if(operand == 1) node.setOperator("-");
 			else if(operand == 2) node.setOperator("*");
@@ -131,7 +171,7 @@ public class Tree {
 		}
 	}
 
-	#copys a tree, returns root node
+	//copys a tree, returns root node
 	public static Node copy(Node node) {
 		Node left = null;
 		Node right = null;
@@ -158,14 +198,14 @@ public class Tree {
 		return new1;
 	}
 
-	#print the tree
+	//print the tree
 	private void printTree() {
 		if(myRoot != null) {
 			printInOrder(myRoot, 0);
 		}
 	}
 
-	#prints tree in order
+	//prints tree in order
 	private void printInOrder(Node currentRoot, int indentLevel) {
 		if(currentRoot == null) {
 			return;
@@ -207,22 +247,9 @@ public class Tree {
 		System.out.println("_______");
 		System.out.println();
 
-		Tree f = new Tree(copy(t.myRoot));
-		Tree s = new Tree(copy(y.myRoot));
-		Tree m = new Tree(copy(s.myRoot));
-		crossover(f, s);
-		System.out.println("___F = TxY___");
-		f.printTree();
-		System.out.println("___S = YxT___");
-		s.printTree();
+		Tree random = newRandomTree(3);
+		random.printTree();
+		System.out.println(random.evaluate(random.myRoot,1));
 
-		System.out.println("___F mutated___");
-		//crossover(f,m);
-		mutate(f);
-		f.printTree();
-		System.out.println(f.evaluate(f.myRoot,1));
-		System.out.println("_______");
-		//m.printTree();
-		//y.printTree();
 	}
 }
