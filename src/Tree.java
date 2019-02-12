@@ -33,7 +33,7 @@ public class Tree {
 			}
 			else{
 				current.setOperator("c");
-				current.setConstant(rand.nextInt(100) + 1);
+				current.setConstant(rand.nextInt(10) + 1);
 			}
 			return;
 		}
@@ -68,18 +68,25 @@ public class Tree {
 		double value;
 		double left = evaluate(current.myLeft, x);
 		double right = evaluate(current.myRight, x);
+
 		if(current.getOperator() == "+") {
 			value = left + right;
 		}
 		else if(current.getOperator() == "-") {
 			value = left - right;
 		}
-		else if(current.getOperator() == "*") {
-			value = left * right;
+		else if(current.getOperator() == "/") {
+			if(right == 0.0) {
+				value = left;
+			}
+			else {
+				value = left / right;
+			}
 		}
 		else {
-			value = left / right;
+			value = left * right;
 		}
+
 		return value;
 
 	}
@@ -198,6 +205,36 @@ public class Tree {
 		return new1;
 	}
 
+	//Caps the depth limit of a tree and replaces all nodes at that depth leaf nodes
+	public void depthLimit(int limit) {
+		Random rand = new Random();
+		int depth = 0;
+		depthHelper(depth, limit, this.myRoot, rand);
+
+	}
+
+	private void depthHelper(int depth, int limit, Node currentRoot, Random rand) {
+		if(currentRoot.myLeft ==null && currentRoot.myRight ==null) {
+			return;
+		}
+		if(depth == limit) {
+			currentRoot.myRight = null;
+			currentRoot.myLeft = null;
+			int chance = rand.nextInt(3);
+			if (chance == 0) {
+				currentRoot.setOperator("x");
+				currentRoot.setConstant(0);
+			}
+			else{
+				currentRoot.setOperator("c");
+				currentRoot.setConstant(rand.nextInt(10) + 1);
+			}
+			return;
+		}
+		depth++;
+		depthHelper(depth, limit, currentRoot.myLeft, rand);
+		depthHelper(depth, limit, currentRoot.myRight, rand);
+	}
 	//print the tree
 	private void printTree() {
 		if(myRoot != null) {
@@ -238,18 +275,23 @@ public class Tree {
 		y.myRoot.myLeft.myRight = new Node("x", y.myRoot.myLeft,0);
 		y.myRoot.myRight.myRight = new Node("x", y.myRoot.myRight,0);
 		y.myRoot.myRight.myLeft = new Node(3, y.myRoot.myRight,1);
-		System.out.println("___T___");
-		t.printTree();
-		System.out.println("______");
-		System.out.println("___Y___");
-		y.printTree();
-		System.out.println("______");
-		System.out.println("_______");
-		System.out.println();
+		//System.out.println("___T___");
+		//t.printTree();
+		//System.out.println("______");
+		//System.out.println("___Y___");
+		//y.printTree();
+		//System.out.println("______");
+		//System.out.println("_______");
+		//System.out.println();
 
 		Tree random = newRandomTree(3);
 		random.printTree();
-		System.out.println(random.evaluate(random.myRoot,1));
+
+
+		System.out.println("______");
+		random.depthLimit(4);
+		random.printTree();
+		//System.out.println(random.evaluate(random.myRoot,1));
 
 	}
 }
