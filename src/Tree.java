@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class Tree {
@@ -10,10 +11,10 @@ public class Tree {
 	}
 
 	//creates new random tree of specified depth
-	public static Tree newRandomTree(int goalDepth){
+	public Tree(int goalDepth){
 		Node root = new Node(null, -1);
 		randomTreeHelper(root, 0, goalDepth);
-		return new Tree(root);
+		myRoot = root;
 	}
 
 	private static void randomTreeHelper(Node current, int depth, int goalDepth){
@@ -66,6 +67,7 @@ public class Tree {
 			}
 		}
 		double value;
+
 		double left = evaluate(current.myLeft, x);
 		double right = evaluate(current.myRight, x);
 
@@ -163,11 +165,11 @@ public class Tree {
 				node.setConstant(0);
 			}
 			else{
-				node.setConstant(rand.nextInt(100)+1);
+				node.setConstant(rand.nextInt(10)+1);
 			}
 		}
 		else if(node.getOperator() =="x") {
-			node.setConstant(rand.nextInt(100)+1);
+			node.setConstant(rand.nextInt(10)+1);
 		}
 		else {
 			int operand = rand.nextInt(4);
@@ -235,8 +237,23 @@ public class Tree {
 		depthHelper(depth, limit, currentRoot.myLeft, rand);
 		depthHelper(depth, limit, currentRoot.myRight, rand);
 	}
+
+	public int maxDepth() {
+		int depth = 0;
+		depth = maxDepthHelper(this.myRoot, depth);
+		return depth;
+	}
+	private int maxDepthHelper(Node current, int depth) {
+		if(current.myLeft == null && current.myRight == null) {
+			return depth;
+		}
+		depth++;
+		int left = maxDepthHelper(current.myLeft, depth);
+		int right = maxDepthHelper(current.myRight, depth);
+		return Math.max(left, right);
+	}
 	//print the tree
-	private void printTree() {
+	public void printTree() {
 		if(myRoot != null) {
 			printInOrder(myRoot, 0);
 		}
@@ -259,6 +276,14 @@ public class Tree {
 			System.out.println(currentRoot.getOperator());
 		}
 		printInOrder(currentRoot.myLeft, indentLevel + 1);
+	}
+
+	public double squaredError(HashMap<Double, Double> data, ArrayList<Double> testData) {
+		double sum = 0;
+		for(double x : testData) {
+			sum+= Math.pow(((this.evaluate(this.myRoot, x) - data.get(x))), 2.0);
+		}
+		return Math.floor(Math.sqrt(sum)*1000)/1000;
 	}
 
 	public static void main(String[] args) {
@@ -284,13 +309,15 @@ public class Tree {
 		//System.out.println("_______");
 		//System.out.println();
 
-		Tree random = newRandomTree(3);
-		random.printTree();
+		Tree random = new Tree(2);
+		Tree random2 = new Tree(5);
 
+		//random.printTree();
 
-		System.out.println("______");
-		random.depthLimit(4);
-		random.printTree();
+		System.out.println(random.myRoot.equals(random2.myRoot));
+
+		//random2.printTree();
+
 		//System.out.println(random.evaluate(random.myRoot,1));
 
 	}

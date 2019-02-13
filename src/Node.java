@@ -76,6 +76,19 @@ public class Node {
 	public void setOperator(String operator) {
 		myOperator = operator;
 	}
+	public boolean equals(Node other) {
+		if(this.myLeft == null && this.myRight == null) {
+
+			return this.myConstant == other.myConstant;
+		}
+		if(this.myOperator == other.myOperator) {
+			boolean left = this.myLeft.equals(other.myLeft);
+			boolean right = this.myRight.equals(other.myRight);
+			return (left||right);
+		}
+		else {
+			return false;
+		}
 /**
 	public int hashCode() {
 		int h = 31 * Objects.hashCode(myOperator);
@@ -85,21 +98,13 @@ public class Node {
 		if (myParent != null) h = h * 31 + myParent.hashCode();
 		return h;
 	}
+**/
 
-	public boolean equals(Node other) {
-		if(!(this.myConstant == other.myConstant)) return false;
-		else if(!(this.myOperator == other.myOperator)) return false;
-		else if((this.myLeft==null && other.myLeft==null) && (this.myRight==null && other.myRight==null)) {
-			if((this.myParent.equals(other.myParent))) return true;
-		}
 
-		else if(!( (this.myLeft==null && other.myLeft==null) || (this.myLeft!=null && other.myLeft!=null) )) return false;
-		else if(!( (this.myRight==null && other.myRight==null) || (this.myRight!=null && other.myRight!=null) )) return false;
-		else if(!( (this.myParent==null && other.myParent==null) || (this.myParent!=null && other.myParent!=null) )) return false;
-		return (this.myLeft.equals(other.myLeft) && this.myRight.equals(other.myRight));
+
 
 
 
 	}
-	**/
+
 }
