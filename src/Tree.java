@@ -34,7 +34,7 @@ public class Tree {
 			}
 			else{
 				current.setOperator("c");
-				current.setConstant(rand.nextInt(10) + 1);
+				current.setConstant(rand.nextInt(50) + 1);
 			}
 			return;
 		}
@@ -67,9 +67,14 @@ public class Tree {
 			}
 		}
 		double value;
-
-		double left = evaluate(current.myLeft, x);
-		double right = evaluate(current.myRight, x);
+		double left = 0;
+		double right = 0;
+		if(current.myLeft != null) {
+			left = evaluate(current.myLeft, x);
+		}
+		if(current.myRight!=null) {
+			right = evaluate(current.myRight, x);
+		}
 
 		if(current.getOperator() == "+") {
 			value = left + right;
@@ -91,8 +96,34 @@ public class Tree {
 
 		return value;
 
-	}
 
+	}
+	public String evaluateEqn(Node current) {
+		if(current.myLeft == null && current.myRight == null) {
+			if(current.getConstant() != 0) {
+				return  Integer.toString(current.getConstant());
+			}
+			else {
+				return "x";
+			}
+		}
+		String eqn;
+		String left = "";
+		String right = "";
+		if(current.myLeft != null) {
+			left = evaluateEqn(current.myLeft);
+		}
+		if(current.myRight!=null) {
+			right = evaluateEqn(current.myRight);
+		}
+
+		eqn = "("+left + current.getOperator()+right+")";
+
+		return eqn;
+
+
+
+	}
 	//returns number of nodes in tree
 	public int size() {
 		return sizeHelper(this.myRoot);
@@ -165,11 +196,11 @@ public class Tree {
 				node.setConstant(0);
 			}
 			else{
-				node.setConstant(rand.nextInt(10)+1);
+				node.setConstant(rand.nextInt(50)+1);
 			}
 		}
 		else if(node.getOperator() =="x") {
-			node.setConstant(rand.nextInt(10)+1);
+			node.setConstant(rand.nextInt(50)+1);
 		}
 		else {
 			int operand = rand.nextInt(4);
@@ -229,13 +260,17 @@ public class Tree {
 			}
 			else{
 				currentRoot.setOperator("c");
-				currentRoot.setConstant(rand.nextInt(10) + 1);
+				currentRoot.setConstant(rand.nextInt(50) + 1);
 			}
 			return;
 		}
 		depth++;
-		depthHelper(depth, limit, currentRoot.myLeft, rand);
-		depthHelper(depth, limit, currentRoot.myRight, rand);
+		if(currentRoot.myLeft != null) {
+			depthHelper(depth, limit, currentRoot.myLeft, rand);
+		}
+		if(currentRoot.myRight != null) {
+			depthHelper(depth, limit, currentRoot.myRight, rand);
+		}
 	}
 
 	public int maxDepth() {
@@ -278,12 +313,19 @@ public class Tree {
 		printInOrder(currentRoot.myLeft, indentLevel + 1);
 	}
 
-	public double squaredError(HashMap<Double, Double> data, ArrayList<Double> testData) {
+	public double meanSquaredError(HashMap<Double, Double> data, ArrayList<Double> testData) {
 		double sum = 0;
 		for(double x : testData) {
-			sum+= Math.pow(((this.evaluate(this.myRoot, x) - data.get(x))), 2.0);
+			sum+= Math.pow(((this.evaluate(this.myRoot, x) - data.get(x))), 2);
 		}
-		return Math.floor(Math.sqrt(sum)*1000)/1000;
+		return Math.floor(Math.sqrt(sum/testData.size())*1000)/1000;
+	}
+	public double meanError(HashMap<Double, Double> data, ArrayList<Double> testData) {
+		double sum = 0;
+		for(double x : testData) {
+			sum+= Math.abs(((this.evaluate(this.myRoot, x) - data.get(x))));
+		}
+		return Math.floor((sum/testData.size())*1000)/1000;
 	}
 
 	public static void main(String[] args) {
@@ -309,12 +351,9 @@ public class Tree {
 		//System.out.println("_______");
 		//System.out.println();
 
-		Tree random = new Tree(2);
-		Tree random2 = new Tree(5);
 
-		//random.printTree();
-
-		System.out.println(random.myRoot.equals(random2.myRoot));
+		Tree random = new Tree(3);
+		random.printTree();
 
 		//random2.printTree();
 

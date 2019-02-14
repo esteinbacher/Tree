@@ -35,7 +35,7 @@ public class Tester {
 		ArrayList<Double> e = new ArrayList<Double>();
 		ArrayList<Double> training = new ArrayList<Double>();
 		ArrayList<Double> testing = new ArrayList<Double>();
-		for(int i = 0; i < 100; i++) {
+		for(int i = 0; i < 1000; i++) {
 			trees.add(new Tree(3));
 		}
 		ArrayList<Double> keys = new ArrayList<Double>();
@@ -43,14 +43,14 @@ public class Tester {
 
 		keys.addAll(data.keySet());
 		Collections.sort(keys);
-		for(int x = 0; x < 4; x++) {
-			while(training.size() < 750) {
+		for(int x = 0; x < 1; x++) {
+			while(training.size() < 701) {
 				int index = rand.nextInt(1002);
 				if(!training.contains(keys.get(index))) {
 					training.add(keys.get(index));
 				}
 			}
-			while(testing.size() < 251) {
+			while(testing.size() < 301) {
 				int index = rand.nextInt(1002);
 				if(!testing.contains(keys.get(index))&&!training.contains(keys.get(index))) {
 					testing.add(keys.get(index));
@@ -60,40 +60,44 @@ public class Tester {
 
 
 			for(Tree t: trees) {
-				errors.put(t.squaredError(data, training),t);
+				errors.put(t.meanSquaredError(data, training),t);
 			}
 			ArrayList<Tree> mutations = new ArrayList<Tree>();
 			ArrayList<Tree> crossovers = new ArrayList<Tree>();
 			int gen = 0;
 			double best = 100000000;
-			while(!(best < .5 || gen >= 500)) {
-				trees.removeAll(trees);
-				crossovers.removeAll(crossovers);
-				mutations.removeAll(mutations);
 
-				for(int t = 0; t < 10; t++) {
+
+			while(!(best < .5 || gen >= 200)) {
+				trees = new ArrayList<Tree>();
+
+				for(int t = 0; t < 100; t++) {
 					Tree t1 = errors.get(Collections.min(errors.keySet()));
 					errors.remove(Collections.min(errors.keySet()));
 					crossovers.add(t1);
 					mutations.add(t1);
-					trees.add(t1);
-				}
 
-				for(int i = 0; i < 10; i++) {
+					trees.add(t1);
+
+				}
+				//System.out.println("r " + trees.size());
+				for(int i = 0; i < 40; i++) {
 					Tree t1 = new Tree(Tree.copy(crossovers.get(i).myRoot));
-					for(int j = 0; j <5; j++) {
+					for(int j = 0; j <10; j++) {
 						Tree t2 = new Tree(Tree.copy(crossovers.get(j).myRoot));
-						if(t1.myRoot.equals(t2.myRoot)) {
-							Tree.crossover(t1, t2);
-							t1.depthLimit(12);
-							t2.depthLimit(12);
-							trees.add(t1);
-							trees.add(t2);
-						}
+
+						Tree.crossover(t1, t2);
+						t1.depthLimit(12);
+						t2.depthLimit(12);
+						trees.add(t1);
+						trees.add(t2);
+
+
 					}
 				}
+				//System.out.println("c " +trees.size());
 
-				for(int j = 0; j < 5; j++) {
+				for(int k = 0; k < 10; k++) {
 					for(int m = 0; m < 10; m++) {
 						Tree t = new Tree(Tree.copy(mutations.get(m).myRoot));
 
@@ -102,22 +106,34 @@ public class Tester {
 						trees.add(t);
 					}
 				}
+
+				//System.out.println("m "+trees.size());
+
 				best = Collections.min(errors.keySet());
 				errors = new HashMap<Double, Tree>();
-				//System.out.println(gen);
+				//System.out.println(trees.size());
 				for(Tree t: trees) {
 					//t.printTree();
-					errors.put(t.squaredError(data, training),t);
+					errors.put(t.meanSquaredError(data, training),t);
 				}
-				//System.out.println(gen);
+
+
 				gen++;
 
 
+				mutations = new ArrayList<Tree>();
+				crossovers = new ArrayList<Tree>();
+
 			}
 			Tree t = errors.get(Collections.min(errors.keySet()));
-			System.out.println(Collections.min(errors.keySet()));
+			System.out.println("squared "+Collections.min(errors.keySet()));
+			System.out.println("mean "+t.meanError(data, training));
 			System.out.println(gen);
-			System.out.println(t.squaredError(data, testing));
+			System.out.println("squared "+t.meanSquaredError(data, testing));
+			System.out.println("mean "+t.meanError(data, testing));
+			System.out.println(t.evaluate(t.myRoot, 1.22));
+			System.out.println(t.evaluate(t.myRoot, -4.38));
+
 
 
 		}
