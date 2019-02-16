@@ -74,7 +74,7 @@ public class Tester {
 		ArrayList<Double> testing = new ArrayList<Double>();
 		int init_depth = 3;
 		dynamic_limit = init_depth;
-		hard_limit = 8;
+		hard_limit = 12;
 
 		ArrayList<Double> keys = new ArrayList<Double>();
 		HashMap data = readXYFromCSV("dataset1.csv");
@@ -118,7 +118,7 @@ public class Tester {
 		int gen = 0;
 
 		//5. keep making new generations until squared error below .5, or # of gens hits 200
-		while(!(best_fitness < .05 || gen >= 20)) { //TODO: change?
+		while(!(best_fitness < .05 || gen >= 200)) { //TODO: change?
 			trees = new ArrayList<Tree>();
 
 			//1. get top 100 trees in population, reproduce (trees), and add to crossovers and mutations
@@ -157,13 +157,13 @@ public class Tester {
 				for(int j = 0; j <10; j++) {
 					t1 = Tree.copy(crossovers.get(i));
 					t2 = Tree.copy(crossovers.get(j));
-					Tree.crossover(t1, t2);
+					Tree.crossover(t1, t2, data, training);
 
 					while ( !(dynamicLimitTest(t1) && dynamicLimitTest(t2)) ){
 						t1 = Tree.copy(crossovers.get(i));
 						t2 = Tree.copy(crossovers.get(j));
 
-						Tree.crossover(t1, t2);
+						Tree.crossover(t1, t2, data, training);
 					}
 					trees.add(t1);
 					trees.add(t2);
@@ -175,10 +175,10 @@ public class Tester {
 			for(int k = 0; k < 10; k++) {
 				for(int m = 0; m < 10; m++) {
 					t = Tree.copy(mutations.get(m));
-					Tree.mutate(t);
+					Tree.mutate(t, data, training);
 					while(!dynamicLimitTest(t)){
 						t = Tree.copy(mutations.get(m));
-						Tree.mutate(t);
+						Tree.mutate(t, data, training);
 					}
 
 					trees.add(t);
@@ -226,8 +226,6 @@ public class Tester {
 	System.out.println("TESTING: \n");
 	System.out.println("squared "+best_tree.meanSquaredError(data, testing));
 	System.out.println("mean "+best_tree.meanError(data, testing));
-	//System.out.println(t.evaluate(t.myRoot, 1.22));
-	//System.out.println(t.evaluate(t.myRoot, -4.38));
-
+	System.out.println("\n");
 	}
 }

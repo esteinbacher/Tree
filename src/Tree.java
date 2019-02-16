@@ -5,8 +5,6 @@ import java.util.Random;
 public class Tree {
 	public Node myRoot;
 	public Double fitness;
-	public HashMap<Double, Double> myData;
-	public ArrayList<Double> myTestData;
 
 	//makes a tree given a root
 	public Tree(Node root) {
@@ -19,8 +17,6 @@ public class Tree {
 		randomTreeHelper(root, 0, goalDepth);
 		myRoot = root;
 		fitness = meanSquaredError(data, testData);
-		myData = data;
-		myTestData = testData;
 	}
 
 	private static void randomTreeHelper(Node current, int depth, int goalDepth){
@@ -157,7 +153,7 @@ public class Tree {
 	}
 
 	//crosses over two trees
-	public static void crossover(Tree newTree1, Tree newTree2) {
+	public static void crossover(Tree newTree1, Tree newTree2, HashMap<Double, Double> data, ArrayList<Double> testData) {
 		Random rand = new Random();
 		ArrayList<Node> Tree1 = new ArrayList<Node>();
 		ArrayList<Node> Tree2 = new ArrayList<Node>();
@@ -187,12 +183,12 @@ public class Tree {
 		}
 		node2.myParent = temp.myParent;
 
-		newTree1.fitness = newTree1.meanSquaredError(newTree1.myData, newTree1.myTestData);
-		newTree2.fitness = newTree2.meanSquaredError(newTree2.myData, newTree2.myTestData);
+		newTree1.fitness = newTree1.meanSquaredError(data, testData);
+		newTree2.fitness = newTree2.meanSquaredError(data, testData);
 	}
 
 	//mutates a random node within given tree
-	public static void mutate(Tree tree) {
+	public static void mutate(Tree tree, HashMap<Double, Double> data, ArrayList<Double> testData) {
 		Random rand = new Random();
 		ArrayList<Node> Tree1 = new ArrayList<Node>();
 		NodeList(tree.myRoot, Tree1);
@@ -218,15 +214,13 @@ public class Tree {
 			else if(operand == 2) node.setOperator("*");
 			else if(operand == 3) node.setOperator("/");
 		}
-		tree.fitness = tree.meanSquaredError(tree.myData, tree.myTestData);
+		tree.fitness = tree.meanSquaredError(data, testData);
 	}
 
 	//copys a tree, returns root node
 	public static Tree copy(Tree old){
 		Tree t = new Tree(copyHelper(old.myRoot));
 		t.fitness = old.fitness;
-		t.myData = old.myData;
-		t.myTestData = old.myTestData;
 		return t;
 	}
 	private static Node copyHelper(Node node) {
