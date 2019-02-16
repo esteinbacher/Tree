@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Random;
 public class Tester {
 
+	static int hard_limit;
 	static int dynamic_limit;
 	static double best_fitness = 1000000000;
 	static Tree best_tree;
@@ -30,7 +31,7 @@ public class Tester {
 			return true; //accept
 		}
 
-		if (depth > dynamic_limit && t.fitness < best_fitness){ //too big, but best fit
+		if (depth > dynamic_limit && t.fitness < best_fitness && depth < hard_limit){ //too big, but best fit
 			numUpdated++;
 			best_fitness = t.fitness; //set best_fit
 			best_tree = t;
@@ -73,6 +74,7 @@ public class Tester {
 		ArrayList<Double> testing = new ArrayList<Double>();
 		int init_depth = 3;
 		dynamic_limit = init_depth;
+		hard_limit = 8;
 
 		ArrayList<Double> keys = new ArrayList<Double>();
 		HashMap data = readXYFromCSV("dataset1.csv");
@@ -109,14 +111,14 @@ public class Tester {
 		Tree init_best = errors.get(Collections.min(errors.keySet()));
 		best_fitness = init_best.fitness;
 		best_tree = init_best;
-		System.out.println("Init best: " + best_fitness);
+		//System.out.println("Init best: " + best_fitness);
 
 		ArrayList<Tree> mutations = new ArrayList<Tree>();
 		ArrayList<Tree> crossovers = new ArrayList<Tree>();
 		int gen = 0;
 
 		//5. keep making new generations until squared error below .5, or # of gens hits 200
-		while(!(best_fitness < .05 || gen >= 200)) { //TODO: change?
+		while(!(best_fitness < .05 || gen >= 20)) { //TODO: change?
 			trees = new ArrayList<Tree>();
 
 			//1. get top 100 trees in population, reproduce (trees), and add to crossovers and mutations
@@ -192,8 +194,9 @@ public class Tester {
 				errors.put(i.fitness,i);
 			}
 			//6. find best tree in new pop
-			Double best_of_gen = Collections.min(errors.keySet());
-			System.out.println("Best Gen " + gen + ": " + best_of_gen);
+			Tree best_of_gen = errors.get(Collections.min(errors.keySet()));
+			//System.out.print("Best Gen " + gen + ": " + best_of_gen.fitness);
+			//System.out.print(" (" + best_of_gen.maxDepth() + ")\n");
 
 			gen++;
 
