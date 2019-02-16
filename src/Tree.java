@@ -4,6 +4,9 @@ import java.util.Random;
 
 public class Tree {
 	public Node myRoot;
+	public Double fitness;
+	public HashMap<Double, Double> myData;
+	public ArrayList<Double> myTestData;
 
 	//makes a tree given a root
 	public Tree(Node root) {
@@ -11,10 +14,13 @@ public class Tree {
 	}
 
 	//creates new random tree of specified depth
-	public Tree(int goalDepth){
+	public Tree(int goalDepth, HashMap<Double, Double> data, ArrayList<Double> testData){
 		Node root = new Node(null, -1);
 		randomTreeHelper(root, 0, goalDepth);
 		myRoot = root;
+		fitness = meanSquaredError(data, testData);
+		myData = data;
+		myTestData = testData;
 	}
 
 	private static void randomTreeHelper(Node current, int depth, int goalDepth){
@@ -180,6 +186,9 @@ public class Tree {
 			temp.myParent.myRight = node2;
 		}
 		node2.myParent = temp.myParent;
+
+		newTree1.fitness = newTree1.meanSquaredError(newTree1.myData, newTree1.myTestData);
+		newTree2.fitness = newTree2.meanSquaredError(newTree2.myData, newTree2.myTestData);
 	}
 
 	//mutates a random node within given tree
@@ -209,19 +218,27 @@ public class Tree {
 			else if(operand == 2) node.setOperator("*");
 			else if(operand == 3) node.setOperator("/");
 		}
+		tree.fitness = tree.meanSquaredError(tree.myData, tree.myTestData);
 	}
 
 	//copys a tree, returns root node
-	public static Node copy(Node node) {
+	public static Tree copy(Tree old){
+		Tree t = new Tree(copyHelper(old.myRoot));
+		t.fitness = old.fitness;
+		t.myData = old.myData;
+		t.myTestData = old.myTestData;
+		return t;
+	}
+	private static Node copyHelper(Node node) {
 		Node left = null;
 		Node right = null;
 		Node new1 = null;
 		if(node.myLeft != null) {
-			left = copy(node.myLeft);
+			left = copyHelper(node.myLeft);
 
 		}
 		if(node.myRight != null) {
-			right = copy(node.myRight);
+			right = copyHelper(node.myRight);
 
 		}
 
@@ -352,8 +369,8 @@ public class Tree {
 		//System.out.println();
 
 
-		Tree random = new Tree(3);
-		random.printTree();
+		//Tree random = new Tree(3);
+		//random.printTree();
 
 		//random2.printTree();
 
