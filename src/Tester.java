@@ -40,7 +40,7 @@ public class Tester {
 		ArrayList<Double> testing = new ArrayList<Double>();
 
 		//2. create intial trees
-		for(int i = 0; i < 1000; i++) {
+		for(int i = 0; i < 500; i++) {
 			trees.add(new Tree(3));
 		}
 
@@ -76,8 +76,16 @@ public class Tester {
 		double best = 100000000;
 
 		//5. keep making new generations until squared error below .5, or # of gens hits 200
-		while(!(best < .5 || gen >= 200)) {
+		while(!(best < .05 || gen >= 200)) {
 			trees = new ArrayList<Tree>();
+			training = new ArrayList<Double>();
+			while(training.size() < 601) {
+				int index = rand.nextInt(701);
+				if(!training.contains(keys.get(index))) {
+					training.add(keys.get(index));
+				}
+			}
+
 
 			//1. get top 100 trees in population, reproduce (trees), and add to crossovers and mutations
 			for(int t = 0; t < 100; t++) {
@@ -109,15 +117,15 @@ public class Tester {
 		//System.out.println("c " +trees.size());
 
 		//3. Mutate the top 10 trees, each tree 10 seperate times -> 100 trees
-		for(int k = 0; k < 10; k++) {
-			for(int m = 0; m < 10; m++) {
+
+			for(int m = 0; m < 100; m++) {
 				Tree t = new Tree(Tree.copy(mutations.get(m).myRoot));
 
 				Tree.mutate(t);
 
 				trees.add(t);
 			}
-		}
+
 
 		//System.out.println("m "+trees.size());
 
@@ -148,8 +156,10 @@ public class Tester {
 	System.out.println(gen);
 	System.out.println("squared "+t.meanSquaredError(data, testing));
 	System.out.println("mean "+t.meanError(data, testing));
-	System.out.println(t.evaluate(t.myRoot, 1.22));
-	System.out.println(t.evaluate(t.myRoot, -4.38));
+	System.out.println(t.size(t.myRoot));;
+	t.printTree();
+	System.out.println(t.evaluateEqn(t.myRoot));
+	System.out.println(t.evaluate(t.myRoot, 1.92));
 
 	}
 }
