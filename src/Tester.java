@@ -12,7 +12,7 @@ public class Tester {
 
 	static int hard_limit;
 	static int dynamic_limit;
-	static double best_fitness = 1000000000;
+	static double best_fitness = 1;
 	static Tree best_tree;
 	static int numPassed = 0;
 	static int numUpdated = 0;
@@ -118,9 +118,15 @@ public class Tester {
 		int gen = 0;
 
 		//5. keep making new generations until squared error below .5, or # of gens hits 200
-		while(!(best_fitness < .05 || gen >= 200)) { //TODO: change?
+		while(!(best_fitness < .02 || gen >= 200)) { //TODO: change?
 			trees = new ArrayList<Tree>();
-
+			training = new ArrayList<Double>();
+			while(training.size() < 601) {
+				int index = rand.nextInt(701);
+				if(!training.contains(keys.get(index))) {
+					training.add(keys.get(index));
+				}
+			}
 			//1. get top 100 trees in population, reproduce (trees), and add to crossovers and mutations
 			while(trees.size() <= 100) { //go until we have gotten 100
 				if(!errors.isEmpty()){
