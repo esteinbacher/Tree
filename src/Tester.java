@@ -118,7 +118,7 @@ public class Tester {
 		int gen = 0;
 
 		//5. keep making new generations until squared error below .5, or # of gens hits 200
-		while(!(best_fitness < .02 || gen >= 200)) { //TODO: change?
+		while(!(best_fitness < .03 || gen >= 200)) { //TODO: change?
 			trees = new ArrayList<Tree>();
 			training = new ArrayList<Double>();
 			while(training.size() < 601) {
@@ -216,12 +216,12 @@ public class Tester {
 	//Tree t = errors.get(Collections.min(errors.keySet()));
 	System.out.println("end best: " + best_fitness);
 	//mean squared error of training set
-	System.out.println("Eqn: " + best_tree.evaluateEqn(best_tree.myRoot));
+	//System.out.println("Eqn: " + best_tree.evaluateEqn(best_tree.myRoot));
 	System.out.println("Depth: " + best_tree.maxDepth());
 	System.out.println("Gen: " + gen);
-	System.out.println("numPassed: " + numPassed);
-	System.out.println("numUpdated: " + numUpdated);
-	System.out.println("numInject: " + numInject);
+	//System.out.println("numPassed: " + numPassed);
+	//System.out.println("numUpdated: " + numUpdated);
+	//System.out.println("numInject: " + numInject);
 	System.out.println("\n");
 	System.out.println("TRAINING: \n");
 	System.out.println("squared "+best_tree.fitness);
